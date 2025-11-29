@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Predicción de Cáncer de Mama</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 12px; padding: 10px; background: #f9f9f9; border-radius: 5px; border-left: 4px solid #007cba; }
+        label { display: block; font-size: 14px; font-weight: bold; margin-bottom: 5px; color: #333; }
+        .feature-name { color: #2c3e50; font-weight: bold; }
+        .feature-info { color: #7f8c8d; font-size: 12px; margin: 3px 0; }
+        input { width: 200px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; }
+        .btn { background: #007cba; color: white; padding: 12px 30px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 20px; }
+        .btn:hover { background: #005a87; }
+        .nav { margin: 20px 0; padding: 15px; background: #e9f7fe; border-radius: 5px; }
+        .nav a { margin-right: 20px; text-decoration: none; color: #007cba; font-weight: bold; }
+        .stats { background: #e8f5e8; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Sistema de Predicción de Cáncer de Mama</h1>
+        
+        <div class="nav">
+            <a href="/">🏠 Inicio</a>
+            <a href="/ejemplo">🧪 Ver ejemplo</a>
+            <a href="/metricas">📈 Métricas del modelo</a>
+        </div>
+
+        <div class="stats">
+            <p><strong>📊 Exactitud del modelo:</strong> {{ "%.1f"|format(accuracy) }}%</p>
+            <p><em>Introduce los valores de las 30 características médicas del paciente:</em></p>
+        </div>
+        
+        <form action="/predecir" method="post">
+            {% for caracteristica in caracteristicas %}
+            <div class="form-group">
+                <label for="{{ caracteristica.nombre_original }}">
+                    <span class="feature-name">{{ loop.index }}. {{ caracteristica.nombre_traducido }}</span>
+                    <div class="feature-info">
+                        📏 Rango: {{ "%.2f"|format(caracteristica.min) }} - {{ "%.2f"|format(caracteristica.max) }} 
+                        | 💡 Ejemplo: {{ "%.2f"|format(caracteristica.ejemplo) }}
+                    </div>
+                </label>
+                <input type="number" step="any" id="{{ caracteristica.nombre_original }}" 
+                       name="{{ caracteristica.nombre_original }}" 
+                       placeholder="Ej: {{ "%.2f"|format(caracteristica.ejemplo) }}"
+                       required>
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn">🔍 Realizar Predicción</button>
+        </form>
+
+        <div style="margin-top: 30px; padding: 15px; background: #fff3cd; border-radius: 5px;">
+            <h3>💡 Información importante:</h3>
+            <ul>
+                <li>Todos los campos son obligatorios</li>
+                <li>Usa puntos para decimales (ej: 12.34)</li>
+                <li>Los valores deben estar dentro de los rangos mostrados</li>
+                <li>Puedes usar los valores de ejemplo como referencia</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

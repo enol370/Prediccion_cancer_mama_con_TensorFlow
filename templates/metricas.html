@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Métricas del Modelo</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .nav { margin: 20px 0; padding: 15px; background: #e9f7fe; border-radius: 5px; }
+        .nav a { margin-right: 20px; text-decoration: none; color: #007cba; font-weight: bold; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin: 20px 0; }
+        .metric-card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; border-left: 5px solid #007cba; }
+        .metric-value { font-size: 32px; font-weight: bold; margin: 10px 0; }
+        .metric-label { font-size: 14px; color: #6c757d; }
+        .confusion-matrix { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; margin: 30px 0; max-width: 400px; }
+        .matrix-header { background: #343a40; color: white; padding: 15px; text-align: center; font-weight: bold; }
+        .matrix-cell { padding: 20px; text-align: center; font-weight: bold; }
+        .tp { background: #d4edda; color: #155724; }
+        .fp { background: #f8d7da; color: #721c24; }
+        .fn { background: #f8d7da; color: #721c24; }
+        .tn { background: #d4edda; color: #155724; }
+        .interpretation { background: #fff3cd; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .performance-badge { display: inline-block; padding: 5px 15px; border-radius: 20px; color: white; font-weight: bold; margin: 10px 0; }
+        .excellent { background: #28a745; }
+        .good { background: #20c997; }
+        .fair { background: #ffc107; color: black; }
+        .poor { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📈 Métricas del Modelo con TensorFlow</h1>
+        
+        <div class="nav">
+            <a href="/">🏠 Inicio</a>
+            <a href="/ejemplo">🧪 Ver ejemplo</a>
+            <a href="/metricas">📈 Métricas</a>
+        </div>
+
+        <!-- Resumen de Rendimiento -->
+        <div style="text-align: center; margin: 30px 0;">
+            <h2>Resumen de Rendimiento</h2>
+            {% if accuracy > 85 %}
+            <span class="performance-badge excellent">EXCELENTE</span>
+            {% elif accuracy > 75 %}
+            <span class="performance-badge good">BUENO</span>
+            {% elif accuracy > 65 %}
+            <span class="performance-badge fair">ACEPTABLE</span>
+            {% else %}
+            <span class="performance-badge poor">MEJORABLE</span>
+            {% endif %}
+        </div>
+
+        <!-- Métricas Principales -->
+        <h2>📊 Métricas Principales</h2>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-value">{{ "%.1f"|format(accuracy) }}%</div>
+                <div class="metric-label">Exactitud (Accuracy)</div>
+                <p style="font-size: 12px; margin: 10px 0 0 0;">Porcentaje de predicciones correctas</p>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ "%.1f"|format(sensitivity) }}%</div>
+                <div class="metric-label">Sensibilidad (Recall)</div>
+                <p style="font-size: 12px; margin: 10px 0 0 0;">Capacidad de detectar casos de cáncer</p>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ "%.1f"|format(specificity) }}%</div>
+                <div class="metric-label">Especificidad</div>
+                <p style="font-size: 12px; margin: 10px 0 0 0;">Capacidad de detectar casos benignos</p>
+            </div>
+            <div class="metric-card">
+                <div class="metric-value">{{ tp + tn }}/{{ tp + tn + fp + fn }}</div>
+                <div class="metric-label">Predicciones Correctas</div>
+                <p style="font-size: 12px; margin: 10px 0 0 0;">Total de aciertos del modelo</p>
+            </div>
+        </div>
+
+        <!-- Matriz de Confusión -->
+        <h2>🎯 Matriz de Confusión</h2>
+        <div style="display: flex; align-items: flex-start; gap: 40px;">
+            <div>
+                <div class="confusion-matrix">
+                    <div class="matrix-header"></div>
+                    <div class="matrix-header">Predicción: 0 (Benigno)</div>
+                    <div class="matrix-header">Predicción: 1 (Maligno)</div>
+                    
+                    <div class="matrix-header">Real: 0 (Benigno)</div>
+                    <div class="matrix-cell tn">{{ tn }} (TN)</div>
+                    <div class="matrix-cell fp">{{ fp }} (FP)</div>
+                    
+                    <div class="matrix-header">Real: 1 (Maligno)</div>
+                    <div class="matrix-cell fn">{{ fn }} (FN)</div>
+                    <div class="matrix-cell tp">{{ tp }} (TP)</div>
+                </div>
+            </div>
+            
+            <div class="interpretation" style="flex: 1;">
+                <h3>💡 Interpretación de la Matriz</h3>
+                <p><strong>Verdaderos Positivos (TP):</strong> {{ tp }} - Casos de cáncer correctamente identificados</p>
+                <p><strong>Verdaderos Negativos (TN):</strong> {{ tn }} - Casos benignos correctamente identificados</p>
+                <p><strong>Falsos Positivos (FP):</strong> {{ fp }} - Falsas alarmas (benignos identificados como cáncer)</p>
+                <p><strong>Falsos Negativos (FN):</strong> {{ fn }} - Casos de cáncer no detectados</p>
+                
+                {% if fn > 0 %}
+                <div style="color: #dc3545; font-weight: bold; margin-top: 10px;">
+                    ⚠️ ALERTA: {{ fn }} caso(s) de cáncer no fueron detectados
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Análisis de Rendimiento -->
+        <div class="interpretation">
+            <h3>📈 Análisis de Rendimiento</h3>
+            
+            {% if sensitivity > 90 %}
+            <p>✅ <strong>Excelente sensibilidad:</strong> El modelo detecta la mayoría de los casos de cáncer</p>
+            {% elif sensitivity > 80 %}
+            <p>⚠️ <strong>Buena sensibilidad:</strong> El modelo detecta muchos casos de cáncer, pero puede mejorar</p>
+            {% else %}
+            <p>❌ <strong>Sensibilidad mejorable:</strong> Se están pasando por alto muchos casos de cáncer</p>
+            {% endif %}
+            
+            {% if specificity > 90 %}
+            <p>✅ <strong>Excelente especificidad:</strong> Pocas falsas alarmas</p>
+            {% elif specificity > 80 %}
+            <p>⚠️ <strong>Buena especificidad:</strong> Algunas falsas alarmas, pero aceptable</p>
+            {% else %}
+            <p>❌ <strong>Especificidad mejorable:</strong> Demasiadas falsas alarmas</p>
+            {% endif %}
+            
+            <p><strong>Recomendación:</strong> 
+                {% if accuracy > 85 and sensitivity > 90 %}
+                El modelo es confiable para uso clínico como herramienta de apoyo.
+                {% else %}
+                Se recomienda mejorar el modelo antes del uso clínico.
+                {% endif %}
+            </p>
+        </div>
+
+        <!-- Información del Modelo -->
+        <div style="background: #e9f7fe; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3>ℹ️ Información Técnica del Modelo</h3>
+            <p><strong>Algoritmo:</strong> Tensorflow (Perceptrón Cmplejo)</p>
+            <p><strong>Características:</strong> 30 características médicas</p>
+            <p><strong>Preprocesamiento:</strong> Binarización de características continuas</p>
+            <p><strong>Dataset:</strong> Wisconsin Breast Cancer Dataset</p>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="/" style="display: inline-block; padding: 12px 25px; background: #007cba; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; margin-right: 10px;">
+                🏠 Volver al Inicio
+            </a>
+            <a href="/ejemplo" style="display: inline-block; padding: 12px 25px; background: #6f42c1; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                🧪 Ver Ejemplo Práctico
+            </a>
+        </div>
+    </div>
+</body>
+</html>

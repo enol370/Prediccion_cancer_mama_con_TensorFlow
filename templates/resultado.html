@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resultado de la Predicción</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .positivo { color: #d9534f; font-weight: bold; background: #fdf7f7; padding: 20px; border-radius: 5px; border-left: 5px solid #d9534f; }
+        .negativo { color: #5cb85c; font-weight: bold; background: #f7fdf7; padding: 20px; border-radius: 5px; border-left: 5px solid #5cb85c; }
+        .nav { margin: 20px 0; padding: 15px; background: #e9f7fe; border-radius: 5px; }
+        .nav a { margin-right: 15px; text-decoration: none; color: #007cba; font-weight: bold; }
+        .metrics { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Resultado de la Predicción</h1>
+        
+        <div class="nav">
+            <a href="/">🏠 Inicio</a>
+            <a href="/ejemplo">🧪 Ver ejemplo</a>
+            <a href="/metricas">📈 Métricas</a>
+        </div>
+        
+        {% if prediccion_num == 1 %}
+        <div class="positivo">
+            <h2>🔴 RESULTADO: POSITIVO para cáncer de mama</h2>
+            <p>El modelo ha detectado características asociadas con tumores malignos</p>
+            <h3>💡 Recomendaciones:</h3>
+            <ul>
+                <li>Consulta con un especialista en oncología</li>
+                <li>Realiza estudios complementarios (biopsia, mamografía)</li>
+                <li>No te alarmes - esto es solo una predicción inicial</li>
+            </ul>
+        </div>
+        {% else %}
+        <div class="negativo">
+            <h2>🟢 RESULTADO: NEGATIVO para cáncer de mama</h2>
+            <p>El modelo ha detectado características asociadas con tumores benignos</p>
+            <h3>💡 Recomendaciones:</h3>
+            <ul>
+                <li>Mantén tus revisiones periódicas</li>
+                <li>Continúa con hábitos saludables</li>
+                <li>Consulta siempre con tu médico para diagnóstico definitivo</li>
+            </ul>
+        </div>
+        {% endif %}
+        
+        <div class="metrics">
+            <h3>📊 Métricas del Modelo:</h3>
+            <p><strong>Confianza general:</strong> {{ "%.1f"|format(confianza) }}% (basado en validación)</p>
+            <p><strong>🎯 Sensibilidad (detección de cáncer):</strong> {{ "%.1f"|format(sensibilidad) }}%</p>
+            <p><strong>🛡️ Especificidad (detección de benignos):</strong> {{ "%.1f"|format(especificidad) }}%</p>
+        </div>
+        
+        <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+            <p style="color: #856404; font-weight: bold; margin: 0;">
+                ⚠️ IMPORTANTE: Esta es una herramienta de apoyo, no reemplaza el diagnóstico médico profesional
+            </p>
+        </div>
+        
+        <a href="/" style="display: inline-block; margin-top: 20px; padding: 12px 25px; background: #007cba; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            ← Realizar otra predicción
+        </a>
+    </div>
+</body>
+</html>
